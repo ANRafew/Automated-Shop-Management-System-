@@ -18,12 +18,12 @@ export default function Navbar() {
   };
 
   return (
-    <header className="flex justify-between items-center px-8 py-4 bg-sky-700 shadow-md">
-      {/* Logo → Homepage */}
+    <header className="flex justify-between items-center md:px-8 py-4 bg-gray-800 shadow-md">
+      {/* logo */}
       <div className="flex items-center">
         <Link to="/">
           <img
-            src="/LR.png" // replace with your logo path
+            src="/LR.png" 
             alt="App Logo"
             className="h-12 w-auto cursor-pointer"
           />
@@ -40,24 +40,21 @@ export default function Navbar() {
             >
               Log in
             </Link>
-            {/* <Link
-              to="/signup"
-              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
-            >
-              Sign up
-            </Link> */}
           </>
         ) : (
           <>  
+            <h1 className="py-2 text-xl md:text-2xl font-semibold uppercase">
+              {user.role}
+            </h1>
             <button
                 onClick={dashboard}
-                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-red-700 transition"
+                className="px-4 py-2 bg-purple-600 text-white font-semibold rounded hover:bg-red-700 transition"
             >
                 Dashboard
             </button>
             <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                className="px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition"
             >
                 Logout
             </button>

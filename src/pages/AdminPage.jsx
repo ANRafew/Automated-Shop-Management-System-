@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function AdminPage() {
+function AdminPage() {
   const navigate = useNavigate();
   const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState("");
@@ -43,6 +43,9 @@ export default function AdminPage() {
   const addStaff = () => {
     navigate("/signup");
   };
+  const gotoInventory = () => {
+    navigate("/inventory");
+  }
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -50,18 +53,18 @@ export default function AdminPage() {
       <p className="text-3xl py-3">Admin Dashboard</p>
 
     <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-8 px-10 py-7">
-      {/* Add Staff */}
+      
       <button
-        onClick={addStaff}
-        className="py-10 bg-purple-600 rounded-3xl text-4xl text-white font-bold hover:bg-purple-900 transition"
+        onClick={gotoInventory}
+        className="py-10 bg-orange-600 rounded-3xl text-4xl text-white font-bold hover:bg-orange-900 transition"
       >
-        New Staff
+        Inventory
       </button>
-
+      
       {/* Balance Section */}
       <div className="py-10  bg-gray-600 rounded-3xl inline-block hover:bg-gray-700 transition">
-        <h2 className="text-2xl font-bold">💰 Current Balance</h2>
-        <p className="text-4xl font-semibold">${balance}</p>
+        <h2 className="text-2xl font-bold">🪙 Current Balance</h2>
+        <p className="text-4xl font-semibold">৳{balance}</p>
       </div>
       
       <div className="p-4 bg-gray-600 rounded-3xl inline-block hover:bg-gray-700 transition">
@@ -84,6 +87,14 @@ export default function AdminPage() {
           *Enter positive value to add and negative value to withdraw  
         </p>       
       </div>
+      {/* Add Staff */}
+      <button
+        onClick={addStaff}
+        className="py-10 bg-purple-600 rounded-3xl text-4xl text-white font-bold hover:bg-purple-900 transition"
+      >
+        New Staff
+      </button>
+      
     </div>
 
 {/* Confirmation Popup */}
@@ -93,7 +104,7 @@ export default function AdminPage() {
             <h2 className="text-3xl font-bold mb-4">Confirm Transaction</h2>
             <p className="text-2xl">
               Are you sure you want to{" "}
-              {Number(amount) >= 0 ? "deposit" : "withdraw"} ${Math.abs(amount)}?
+              {Number(amount) >= 0 ? "deposit" : "withdraw"} ৳{Math.abs(amount)}?
             </p>
             <div className="mt-4 flex text-2xl justify-center gap-4">
               <button
@@ -119,3 +130,4 @@ export default function AdminPage() {
     </div>
   );
 }
+export default AdminPage;

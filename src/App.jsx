@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AdminPage from "./pages/AdminPage";
 import StaffPage from "./pages/StaffPage";
+import InventoryPage from './pages/InventoryPage';
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from './components/navbar';
 
@@ -33,6 +34,12 @@ function App() {
           <ProtectedRoute role="staff">
             <StaffPage />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventory"
+        element={
+            <InventoryPage />
         }
       />
     </Routes>
