@@ -8,6 +8,8 @@ function AdminPage() {
   const [amount, setAmount] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [totalInventory, setTotalInventory] = useState(0);
+  const [products, setProducts] = useState([]);
 
   // Fetch balance on load
   useEffect(() => {
@@ -18,6 +20,13 @@ function AdminPage() {
 
         const resHistory = await axios.get("http://localhost:5000/admin/transactions");
         setTransactions(resHistory.data);
+
+        const res = await axios.get("http://localhost:5000/inventory");
+        const fetchedProducts = res.data.products || res.data;
+        setProducts(fetchedProducts);
+        let totalInventory = 0;
+        fetchedProducts.forEach((t) => (totalInventory += (t.wholesalePrice * t.quantity) || 0));
+        setTotalInventory(totalInventory);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -38,17 +47,20 @@ function AdminPage() {
     }
   };
 
-  
-
+  // ADD STAFF
   const addStaff = () => {
     navigate("/signup");
   };
   const gotoInventory = () => {
     navigate("/inventory");
   }
+  const gotoReport = () => {
+    navigate("/report");
+  }
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <div className="text-center min-h-155 py-5
+                    bg-cover bg-center bg-[url('/shopBG01.jpg')] bg-black/40 bg-blend-overlay">
       <h1 className="text-5xl">Automated Shop Management System</h1>
       <p className="text-3xl py-3">Admin Dashboard</p>
 
@@ -66,7 +78,7 @@ function AdminPage() {
         <h2 className="text-2xl font-bold">🪙 Current Balance</h2>
         <p className="text-4xl font-semibold">৳{balance}</p>
       </div>
-      
+      {/* update balance */}
       <div className="p-4 bg-gray-600 rounded-3xl inline-block hover:bg-gray-700 transition">
         <div className="my-4 flex justify-center gap-2">
           <input
@@ -94,7 +106,18 @@ function AdminPage() {
       >
         New Staff
       </button>
-      
+      {/* Monthly report */}
+      <button
+        onClick={gotoReport}
+        className="py-10 bg-sky-600 rounded-3xl text-4xl text-white font-bold hover:bg-sky-900 transition"
+      >
+        Monthly Report
+      </button>
+      {/* assets */}
+      <div className="py-10  bg-green-600 rounded-3xl inline-block hover:bg-green-700 transition">
+        <h2 className="text-2xl font-bold">Total Assets</h2>
+        <p className="text-4xl font-semibold">৳{balance+totalInventory}</p>
+      </div>
     </div>
 
 {/* Confirmation Popup */}

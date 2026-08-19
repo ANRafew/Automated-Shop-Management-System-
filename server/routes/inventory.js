@@ -16,8 +16,8 @@ export default function inventoryRoutes(inventoryCollection, balanceCollection, 
 
   // Add product (buying new stock)
   router.post("/add", async (req, res) => {
-    const { name, image, price, quantity } = req.body;
-    const totalCost = price * quantity;
+    const { name, image, wholesalePrice, mrp, quantity } = req.body;
+    const totalCost = wholesalePrice * quantity;
 
     try {
       const balanceDoc = await balanceCollection.findOne({ _id: "balance" });
@@ -25,11 +25,17 @@ export default function inventoryRoutes(inventoryCollection, balanceCollection, 
         return res.status(400).json({ success: false, error: "Insufficient balance to buy product" });
       }
 
-      await inventoryCollection.insertOne({ name, image, price, quantity });
+      await inventoryCollection.insertOne({ name, image, wholesalePrice, mrp, quantity });
       await balanceCollection.updateOne({ _id: "balance" }, { $inc: { currentBalance: -totalCost } });
 
       await transactionsCollection.insertOne({
-        type: "buy", product: name, units: quantity, price, totalCost, date: new Date()
+        type: "buy",
+        product: name,
+        units: quantity,
+        wholesalePrice,
+        mrp,
+        totalCost,
+        date: new Date()
       });
 
       const updatedBalance = await balanceCollection.findOne({ _id: "balance" });
@@ -46,7 +52,7 @@ export default function inventoryRoutes(inventoryCollection, balanceCollection, 
       const product = await inventoryCollection.findOne({ _id: new ObjectId(productId) });
       if (!product) return res.status(404).json({ success: false, error: "Product not found" });
 
-      const totalCost = product.price * units;
+      const totalCost = product.wholesalePrice * units;
       const balanceDoc = await balanceCollection.findOne({ _id: "balance" });
       if (!balanceDoc || balanceDoc.currentBalance < totalCost) {
         return res.status(400).json({ success: false, error: "Insufficient balance" });
@@ -56,7 +62,13 @@ export default function inventoryRoutes(inventoryCollection, balanceCollection, 
       await balanceCollection.updateOne({ _id: "balance" }, { $inc: { currentBalance: -totalCost } });
 
       await transactionsCollection.insertOne({
-        type: "buy", product: product.name, units, price: product.price, totalCost, date: new Date()
+        type: "buy",
+        product: product.name,
+        units,
+        wholesalePrice: product.wholesalePrice,
+        mrp: product.mrp,
+        totalCost,
+        date: new Date()
       });
 
       res.status(200).json({ success: true, message: "Units bought successfully" });
@@ -76,12 +88,18 @@ export default function inventoryRoutes(inventoryCollection, balanceCollection, 
         return res.status(400).json({ success: false, error: "Not enough stock to sell" });
       }
 
-      const totalRevenue = product.price * units;
+      const totalRevenue = product.mrp * units;
       await inventoryCollection.updateOne({ _id: new ObjectId(productId) }, { $inc: { quantity: -units } });
       await balanceCollection.updateOne({ _id: "balance" }, { $inc: { currentBalance: totalRevenue } });
 
       await transactionsCollection.insertOne({
-        type: "sell", product: product.name, units, price: product.price, totalRevenue, date: new Date()
+        type: "sell",
+        product: product.name,
+        units,
+        wholesalePrice: product.wholesalePrice,
+        mrp: product.mrp,
+        totalRevenue,
+        date: new Date()
       });
 
       res.status(200).json({ success: true, message: "Units sold successfully" });
@@ -90,22 +108,31 @@ export default function inventoryRoutes(inventoryCollection, balanceCollection, 
     }
   });
 
-  // Update product price
+  // Update product prices
   router.post("/updatePrice", async (req, res) => {
-    const { productId, newPrice } = req.body;
+    const { productId, newWholesalePrice, newMrp } = req.body;
     try {
       const product = await inventoryCollection.findOne({ _id: new ObjectId(productId) });
       if (!product) return res.status(404).json({ success: false, error: "Product not found" });
 
-      await inventoryCollection.updateOne({ _id: new ObjectId(productId) }, { $set: { price: newPrice } });
+      await inventoryCollection.updateOne(
+        { _id: new ObjectId(productId) },
+        { $set: { wholesalePrice: newWholesalePrice, mrp: newMrp } }
+      );
 
       await transactionsCollection.insertOne({
-        type: "update", product: product.name, oldPrice: product.price, newPrice, date: new Date()
+        type: "update",
+        product: product.name,
+        oldWholesalePrice: product.wholesalePrice,
+        oldMrp: product.mrp,
+        newWholesalePrice,
+        newMrp,
+        date: new Date()
       });
 
-      res.status(200).json({ success: true, message: "Price updated successfully" });
+      res.status(200).json({ success: true, message: "Prices updated successfully" });
     } catch (err) {
-      res.status(500).json({ success: false, error: "Failed to update price" });
+      res.status(500).json({ success: false, error: "Failed to update prices" });
     }
   });
 

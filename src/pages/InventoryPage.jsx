@@ -3,14 +3,15 @@ import axios from "axios";
 
 function InventoryPage() {
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({ name: "", image: "", price: "", quantity: "" });
+  const [form, setForm] = useState({ name: "", image: "", wholesalePrice: "", mrp: "", quantity: "" });
   const [balance, setBalance] = useState(0);
 
   const [showPopup, setShowPopup] = useState(false);
   const [action, setAction] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [units, setUnits] = useState("");
-  const [newPrice, setNewPrice] = useState("");
+  const [newWholesalePrice, setNewWholesalePrice] = useState("");
+  const [newMrp, setNewMrp] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -21,7 +22,7 @@ function InventoryPage() {
   const fetchProducts = async () => {
     try {
       const res = await axios.get("http://localhost:5000/inventory");
-      setProducts(res.data.products || res.data); // backend returns {products: [...]} or just array
+      setProducts(res.data.products || res.data);
     } catch (err) {
       console.error("Error fetching inventory:", err);
     }
@@ -40,16 +41,17 @@ function InventoryPage() {
     try {
       const res = await axios.post("http://localhost:5000/inventory/add", {
         ...form,
-        price: Number(form.price),
+        wholesalePrice: Number(form.wholesalePrice),
+        mrp: Number(form.mrp),
         quantity: Number(form.quantity),
       });
-      alert(res.data.message); // ✅ show success message
-      setForm({ name: "", image: "", price: "", quantity: "" });
-      await fetchProducts();   // ✅ refresh immediately
+      alert(res.data.message);
+      setForm({ name: "", image: "", wholesalePrice: "", mrp: "", quantity: "" });
+      await fetchProducts();
       await fetchBalance();
     } catch (err) {
       if (err.response?.data?.error) {
-        alert(err.response.data.error); // ✅ show only necessary error
+        alert(err.response.data.error);
       }
     }
   };
@@ -58,7 +60,8 @@ function InventoryPage() {
     setAction(type);
     setSelectedProduct(product);
     setUnits("");
-    setNewPrice("");
+    setNewWholesalePrice("");
+    setNewMrp("");
     setShowPopup(true);
   };
 
@@ -78,43 +81,44 @@ function InventoryPage() {
       } else if (action === "update") {
         res = await axios.post("http://localhost:5000/inventory/updatePrice", {
           productId: selectedProduct._id,
-          newPrice: Number(newPrice),
+          newWholesalePrice: Number(newWholesalePrice),
+          newMrp: Number(newMrp),
         });
       }
 
-      alert(res.data.message); // ✅ show success immediately
-      await fetchProducts();   // ✅ refresh products
-      await fetchBalance();    // ✅ refresh balance
+      alert(res.data.message);
+      await fetchProducts();
+      await fetchBalance();
       setShowPopup(false);
     } catch (err) {
       if (err.response?.data?.error) {
-        alert(err.response.data.error); // ✅ only necessary error
+        alert(err.response.data.error);
       }
     }
   };
-// 🔎 Filter products by search term
+
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="px-2 md:px-10 py-7">
+    <div className="px-2 md:px-10 py-2">
       <h1 className="text-5xl text-center font-bold mb-6">Inventory</h1>
 
       <div className="grid grid-cols-2 gap-4 px-2 md:grid-cols-4 md:gap-8 md:px-10">
         {/* Product List */}
         <div className="grid md:grid-cols-3 md:col-span-3 md:gap-6 gap-3">
           {filteredProducts.map((p, i) => (
-            <div key={i} className="bg-black rounded-lg shadow max-h-110 md:max-h-90 p-4 text-white">
+            <div key={i} className="bg-black rounded-lg shadow p-4 text-white">
               <img src={p.image} alt={p.name} className="h-40 w-full object-contain mb-4" />
               <h2 className="text-xl font-bold">{p.name}</h2>
-              <p>💲 Price: ৳{p.price} / unit</p>
+              <p>💲 MRP: ৳{p.mrp} / unit</p>
               <p>📦 Quantity: {p.quantity}</p>
 
-              <div className="grid md:grid-cols-3 gap-2 mt-4 ">
+              <div className="grid grid-cols-3 gap-1 md:gap-2 mt-4">
                 <button
                   onClick={() => openPopup("buy", p)}
-                  className="bg-green-600 hover:bg-green-800 transition text-white px-3 py-1 rounded "
+                  className="bg-green-600 hover:bg-green-800 transition text-white px-3 py-1 rounded"
                 >
                   Buy
                 </button>
@@ -136,23 +140,25 @@ function InventoryPage() {
         </div>
 
         {/* Search + Balance + Add Product */}
-        <div className="col-span-1 h-fit sticky top-6">
-        {/* 🔎 Search Bar */}
-          <div className="mb-6 p-4 bg-gray-600 rounded-lg text-white">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border p-2 rounded w-full"
-              />
-          </div>  
+        <div className="col-span-1 sticky top-6 self-start">
+          {/* Search Bar */}
+          <div className="mb-3 p-4 bg-gray-600 rounded-lg text-white">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border p-2 rounded w-full"
+            />
+          </div>
+
           {/* Balance */}
-          <div className="mb-6 p-4 bg-gray-600 rounded-lg text-white">
+          <div className="mb-3 p-4 bg-gray-600 rounded-lg text-white">
             <h2 className="text-3xl font-bold">Current Balance</h2>
             <p className="text-2xl font-semibold">৳{balance}</p>
           </div>
-          {/* Add Section */}
+
+          {/* Add Product */}
           <div className="mb-6 p-4 bg-gray-600 rounded-lg text-white">
             <h2 className="text-2xl font-bold mb-2">➕ Add Product (Buy)</h2>
             <div className="flex flex-col gap-2">
@@ -172,9 +178,16 @@ function InventoryPage() {
               />
               <input
                 type="integer"
-                placeholder="Price per unit"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                placeholder="Price"
+                value={form.wholesalePrice}
+                onChange={(e) => setForm({ ...form, wholesalePrice: e.target.value })}
+                className="border p-2 rounded"
+              />
+              <input
+                type="intger"
+                placeholder="MRP"
+                value={form.mrp}
+                onChange={(e) => setForm({ ...form, mrp: e.target.value })}
                 className="border p-2 rounded"
               />
               <input
@@ -192,6 +205,14 @@ function InventoryPage() {
               </button>
             </div>
           </div>
+          <div>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <i className="fa-regular fa-circle-up 
+                fixed bottom-6 right-6 text-blue-900 text-5xl px-4 py-2 shadow-lg hover:text-blue-800 transition"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -200,16 +221,34 @@ function InventoryPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black/90 bg-opacity-50">
           <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
             <h2 className="text-3xl font-bold mb-4">
-              {action === "buy" && `Buy ৳{selectedProduct.name}`}
-              {action === "sell" && `Sell ৳{selectedProduct.name}`}
-              {action === "update" && `Update Price for ৳{selectedProduct.name}`}
+              {action === "buy" && `Buy ${selectedProduct.name}`}
+              {action === "sell" && `Sell ${selectedProduct.name}`}
+              {action === "update" && `Update Prices for ${selectedProduct.name}`}
             </h2>
             <div className="mb-4 text-left text-2xl">
               <p className="font-semibold">💰 Current Balance: ৳{balance}</p>
-              <p className="font-semibold">💲 Price per unit: ৳{selectedProduct.price}</p>
+              <p className="font-semibold">💲 Wholesale: ৳{selectedProduct.wholesalePrice}</p>
+              <p className="font-semibold">💲 MRP: ৳{selectedProduct.mrp}</p>
             </div>
 
-            {action !== "update" ? (
+            {action === "update" ? (
+              <>
+                <input
+                  type="integer"
+                  placeholder="New Wholesale Price"
+                  value={newWholesalePrice}
+                  onChange={(e) => setNewWholesalePrice(e.target.value)}
+                  className="border p-2 rounded w-full mb-4"
+                />
+                <input
+                  type="integer"
+                  placeholder="New MRP"
+                  value={newMrp}
+                  onChange={(e) => setNewMrp(e.target.value)}
+                  className="border p-2 rounded w-full mb-4"
+                />
+              </>
+            ) : (
               <input
                 type="integer"
                 placeholder="Units"
@@ -217,20 +256,12 @@ function InventoryPage() {
                 onChange={(e) => setUnits(e.target.value)}
                 className="border p-2 rounded w-full mb-4"
               />
-            ) : (
-              <input
-                type="integer"
-                placeholder="New Price"
-                value={newPrice}
-                onChange={(e) => setNewPrice(e.target.value)}
-                className="border p-2 rounded w-full mb-4"
-              />
             )}
 
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleConfirm}
-                className="bg-green-600 hover:bg-red-600 transition text-white px-4 py-2 rounded"
+                className="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded"
               >
                 Confirm
               </button>
@@ -249,3 +280,4 @@ function InventoryPage() {
 }
 
 export default InventoryPage;
+

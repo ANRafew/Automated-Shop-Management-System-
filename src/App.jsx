@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from './components/navbar';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AdminPage from "./pages/AdminPage";
 import StaffPage from "./pages/StaffPage";
 import InventoryPage from './pages/InventoryPage';
-import ProtectedRoute from "./components/ProtectedRoute";
-import Navbar from './components/navbar';
+import MonthlyReport from './pages/MonthlyReport';
+
 
 function App() {
   return (
@@ -40,6 +42,12 @@ function App() {
         path="/inventory"
         element={
             <InventoryPage />
+        }
+      />
+      <Route
+        path="/report"
+        element={
+            <MonthlyReport />
         }
       />
     </Routes>

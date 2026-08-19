@@ -18,7 +18,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="flex justify-between items-center md:px-8 py-4 bg-gray-800 shadow-md">
+    <header className="flex justify-between items-center md:px-8 py-3 bg-gray-800 shadow-md">
       {/* logo */}
       <div className="flex items-center">
         <Link to="/">
