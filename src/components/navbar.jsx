@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Navbar() {
+function Navbar() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -64,3 +64,4 @@ export default function Navbar() {
     </header>
   );
 }
+export default Navbar;

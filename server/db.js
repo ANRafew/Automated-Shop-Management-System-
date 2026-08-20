@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 
-dotenv.config(); // load .env variables
+dotenv.config();
 
 const uri = process.env.MONGO_URI; // USE *YOUR* MONGODB PROJECTS CLUSTER CONNECTION STRING WITHOUT *SRV*
 

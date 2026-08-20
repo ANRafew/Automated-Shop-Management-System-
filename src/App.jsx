@@ -5,6 +5,7 @@ import Navbar from './components/navbar';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AutoLogout from './components/autoLogout';
 import AdminPage from "./pages/AdminPage";
 import StaffPage from "./pages/StaffPage";
 import InventoryPage from './pages/InventoryPage';
@@ -15,11 +16,11 @@ function App() {
   return (
   <>
     <Navbar />
+    <AutoLogout />
     <Routes>
       
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
 
       {/* Protected routes */}
       <Route
@@ -27,6 +28,14 @@ function App() {
         element={
           <ProtectedRoute role="admin">
             <AdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <ProtectedRoute role="admin">
+            <Signup />
           </ProtectedRoute>
         }
       />

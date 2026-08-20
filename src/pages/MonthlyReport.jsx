@@ -48,24 +48,40 @@ function MonthlyReport() {
 
     setAdminTransactions(fetchedTransactions);
 
-    // filter by type (make sure spelling matches backend)
-    const deposits = fetchedTransactions.filter((t) => t.type === "deposit");
-    const withdrawals = fetchedTransactions.filter((t) => t.type === "withdrawal");
+    // assume you already have selectedMonth and selectedYear in state
+    const deposits = fetchedTransactions.filter((t) => {
+      const d = new Date(t.date);
+      return (
+        t.type === "deposit" &&
+        d.getMonth() === selectedMonth &&
+        d.getFullYear() === selectedYear
+      );
+    });
+
+    const withdrawals = fetchedTransactions.filter((t) => {
+      const d = new Date(t.date);
+      return (
+        t.type === "withdrawal" &&
+        d.getMonth() === selectedMonth &&
+        d.getFullYear() === selectedYear
+      );
+    });
 
     // sum amounts
     let depositTotal = 0;
-    deposits.forEach((t) => depositTotal += t.amount || 0);
+    deposits.forEach((t) => (depositTotal += t.amount || 0));
 
     let withdrawalTotal = 0;
-    withdrawals.forEach((t) => withdrawalTotal += t.amount || 0);
+    withdrawals.forEach((t) => (withdrawalTotal += t.amount || 0));
 
     setTotalDeposit(depositTotal);
     setTotalWithdrawal(withdrawalTotal);
 
-    } catch (err) {
-      console.error("Error fetching admin transactions:", err);
-    }
-  };
+  } catch (err) {
+    console.error("Error fetching admin transactions:", err);
+  }
+};
+
 
   const fetchProducts = async () => {
     try {

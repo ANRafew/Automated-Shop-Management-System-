@@ -41,7 +41,7 @@ function StaffPage() {
 
   return (
     <div className="text-center min-h-155 py-5
-                    bg-cover bg-center bg-[url('/shopBG01.jpg')] bg-black/40 bg-blend-overlay">
+                    bg-cover bg-center bg-[url('/shopBG.jpg')] bg-black/40 bg-blend-overlay">
       <h1 className="text-5xl">Automated Shop Management System</h1>
       <p className="text-3xl py-3">Staff Dashboard</p>
 
@@ -49,25 +49,25 @@ function StaffPage() {
         
         <button
           onClick={gotoInventory}
-          className="py-10 bg-orange-600 rounded-3xl text-4xl text-white font-bold hover:bg-orange-900 transition"
+          className="py-10 bg-orange-600/90 rounded-3xl text-4xl text-white font-bold hover:bg-orange-900 transition"
         >
           Inventory
         </button>
         
         {/* Balance Section */}
-        <div className="py-10  bg-gray-600 rounded-3xl inline-block hover:bg-gray-700 transition">
+        <div className="py-10  bg-gray-600/90 rounded-3xl inline-block hover:bg-gray-700 transition">
           <h2 className="text-2xl font-bold">🪙 Current Balance</h2>
           <p className="text-4xl font-semibold">৳{balance}</p>
         </div> 
         {/* Monthly report */}
         <button
           onClick={gotoReport}
-          className="py-10 bg-sky-600 rounded-3xl text-4xl text-white font-bold hover:bg-sky-900 transition"
+          className="py-10 bg-sky-600/90 rounded-3xl text-4xl text-white font-bold hover:bg-sky-900 transition"
         >
           Monthly Report
         </button> 
         {/* assets */}
-        <div className="py-10  bg-green-600 rounded-3xl inline-block hover:bg-green-700 transition">
+        <div className="py-10  bg-green-600/90 rounded-3xl inline-block hover:bg-green-700 transition">
           <h2 className="text-2xl font-bold">Total Assets</h2>
           <p className="text-4xl font-semibold">৳{balance+totalInventory}</p>
         </div>

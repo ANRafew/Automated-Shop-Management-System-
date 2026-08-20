@@ -19,6 +19,7 @@ function InventoryPage() {
     fetchBalance();
   }, []);
 
+  // products from db
   const fetchProducts = async () => {
     try {
       const res = await axios.get("http://localhost:5000/inventory");
@@ -28,6 +29,7 @@ function InventoryPage() {
     }
   };
 
+  // current balance from db
   const fetchBalance = async () => {
     try {
       const res = await axios.get("http://localhost:5000/admin/balance");
@@ -37,6 +39,7 @@ function InventoryPage() {
     }
   };
 
+  //adding product to inventory
   const addProduct = async () => {
     try {
       const res = await axios.post("http://localhost:5000/inventory/add", {
@@ -56,6 +59,7 @@ function InventoryPage() {
     }
   };
 
+  // pop cards: Action on existing 
   const openPopup = (type, product) => {
     setAction(type);
     setSelectedProduct(product);
@@ -64,7 +68,7 @@ function InventoryPage() {
     setNewMrp("");
     setShowPopup(true);
   };
-
+  // Action logic & confirmation logic
   const handleConfirm = async () => {
     try {
       let res;
@@ -97,6 +101,7 @@ function InventoryPage() {
     }
   };
 
+  // search logic
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -109,7 +114,7 @@ function InventoryPage() {
         {/* Product List */}
         <div className="grid md:grid-cols-3 md:col-span-3 md:gap-6 gap-3">
           {filteredProducts.map((p, i) => (
-            <div key={i} className="bg-black rounded-lg shadow p-4 text-white">
+            <div key={i} className="bg-black rounded-lg shadow md:p-4 p-1 text-white max-h-110">
               <img src={p.image} alt={p.name} className="h-40 w-full object-contain mb-4" />
               <h2 className="text-xl font-bold">{p.name}</h2>
               <p>💲 MRP: ৳{p.mrp} / unit</p>
@@ -118,19 +123,19 @@ function InventoryPage() {
               <div className="grid grid-cols-3 gap-1 md:gap-2 mt-4">
                 <button
                   onClick={() => openPopup("buy", p)}
-                  className="bg-green-600 hover:bg-green-800 transition text-white px-3 py-1 rounded"
+                  className="bg-green-600 hover:bg-green-800 transition text-white md:px-3 py-1 rounded"
                 >
                   Buy
                 </button>
                 <button
                   onClick={() => openPopup("sell", p)}
-                  className="bg-red-600 hover:bg-red-800 transition text-white px-3 py-1 rounded"
+                  className="bg-red-600 hover:bg-red-800 transition text-white md:px-3 py-1 rounded"
                 >
                   Sell
                 </button>
                 <button
                   onClick={() => openPopup("update", p)}
-                  className="bg-blue-600 hover:bg-blue-800 transition text-white px-3 py-1 rounded"
+                  className="bg-blue-600 hover:bg-blue-800 transition text-white md:px-3 py-1 rounded"
                 >
                   Update
                 </button>
@@ -178,7 +183,7 @@ function InventoryPage() {
               />
               <input
                 type="integer"
-                placeholder="Price"
+                placeholder="Cost"
                 value={form.wholesalePrice}
                 onChange={(e) => setForm({ ...form, wholesalePrice: e.target.value })}
                 className="border p-2 rounded"
@@ -216,7 +221,7 @@ function InventoryPage() {
         </div>
       </div>
 
-      {/* Popup Modal */}
+      {/* popup cards: Action on existing products */}
       {showPopup && selectedProduct && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/90 bg-opacity-50">
           <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
@@ -278,6 +283,4 @@ function InventoryPage() {
     </div>
   );
 }
-
 export default InventoryPage;
-
