@@ -2,18 +2,19 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const storedUser = JSON.parse(sessionStorage.getItem("user")); // session storage
 
+  //logout and session clear logic
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     navigate("/");
   };
 
-  const dashboard = () =>{
-    if(user.role === "admin"){
-        navigate("/admin");
+  const dashboard = () => {
+    if (storedUser?.role === "admin") {
+      navigate("/admin");
     } else {
-        navigate("/staff");
+      navigate("/staff");
     }
   };
 
@@ -23,7 +24,7 @@ function Navbar() {
       <div className="flex items-center">
         <Link to="/">
           <img
-            src="/LR.png" 
+            src="/LR.png"
             alt="App Logo"
             className="h-12 w-auto cursor-pointer"
           />
@@ -32,7 +33,7 @@ function Navbar() {
 
       {/* Right side buttons */}
       <div className="flex gap-4">
-        {!user ? (
+        {!storedUser ? (
           <>
             <Link
               to="/login"
@@ -42,21 +43,21 @@ function Navbar() {
             </Link>
           </>
         ) : (
-          <>  
+          <>
             <h1 className="py-2 text-xl md:text-2xl font-semibold uppercase">
-              {user.role}
+              {storedUser.role}
             </h1>
             <button
-                onClick={dashboard}
-                className="px-4 py-2 bg-purple-600 text-white font-semibold rounded hover:bg-red-700 transition"
+              onClick={dashboard}
+              className="px-4 py-2 bg-purple-600 text-white font-semibold rounded hover:bg-red-700 transition"
             >
-                Dashboard
+              Dashboard
             </button>
             <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition"
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition"
             >
-                Logout
+              Logout
             </button>
           </>
         )}
@@ -64,4 +65,5 @@ function Navbar() {
     </header>
   );
 }
+
 export default Navbar;

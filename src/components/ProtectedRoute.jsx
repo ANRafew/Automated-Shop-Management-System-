@@ -1,13 +1,13 @@
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ role, children }) {
-  const user = JSON.parse(localStorage.getItem("user")); // stored after login
+  const storedUser = JSON.parse(sessionStorage.getItem("user")); // stored in session after login
 
-  if (!user) {
+  if (!storedUser) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.role !== role) {
+  if (storedUser.role !== role) {
     return <Navigate to="/" replace />;
   }
 

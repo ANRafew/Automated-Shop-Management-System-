@@ -14,8 +14,8 @@ function Login() {
       const res = await axios.post("http://localhost:5000/auth/login", form);
       const { role, uid } = res.data;
 
-      // Saving user info in localStorage
-      localStorage.setItem("user", JSON.stringify({ email: form.email, role, uid }));
+      //save in session storage
+      sessionStorage.setItem("user", JSON.stringify({ email: form.email, role, uid }));
 
       if (role === "admin") {
         navigate("/admin");
